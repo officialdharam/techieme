@@ -7,7 +7,8 @@ public class ShortestPathInBST {
 	public static void main(String[] args) {
 		ShortestPathInBST bstPath = new ShortestPathInBST();
 		BSTNode bst = bstPath.prepareBST();
-		int[] paths = new int[5];
+		int heightOfTree = bstPath.heightOfTree(bst);
+		int[] paths = new int[heightOfTree];
 		int K = 100;
 		int sumLocal = 0;
 		bstPath.findPath(0, paths, bst, K, sumLocal);
@@ -74,6 +75,12 @@ public class ShortestPathInBST {
 		BSTNode node01 = new BSTNode(11, node03, node02);
 
 		return node01;
+	}
+	
+	private int heightOfTree(BSTNode root){
+		if(root == null)
+			return 0;
+		return 1 + Math.max(heightOfTree(root.left), heightOfTree(root.right));
 	}
 }
 
