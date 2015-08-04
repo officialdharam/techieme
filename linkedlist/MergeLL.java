@@ -1,26 +1,13 @@
 package com.interview.ll;
 
-public class Reverse {
+public class MergeLL {
 
 	public static void main(String[] args) {
-		
-		Node node06 = new Node(9, null);
-		Node node05 = new Node(8, node06);
-		Node node04 = new Node(7, node05);
-		Node node03 = new Node(4, node04);
-		Node node02 = new Node(3, node03);
-		Node node01 = new Node(1, node02);
-		
-		Node node16 = new Node(9, null);
-		Node node15 = new Node(8, node16);
-		Node node14 = new Node(6, node15);
-		Node node13 = new Node(5, node14);
-		Node node12 = new Node(2, node13);
-		Node node11 = new Node(1, node12);
-		
-		Reverse reverse = new Reverse();
-		Node mergeLists = reverse.MergeLists(node01, node11);
-		System.out.println(mergeLists);
+		MergeLL llDriver = new MergeLL();
+		Node ll1 = llDriver.prepareLinkedList(new int[]{1,3,4,7,8,9});
+		Node ll2 = llDriver.prepareLinkedList(new int[]{1,2,5,6,8,9});
+		Node mergeLists = llDriver.MergeLists(ll1, ll2);
+		llDriver.printLinkedList(mergeLists);
 	}
 
 	Node MergeLists(Node list1, Node list2) {
@@ -49,6 +36,61 @@ public class Reverse {
 		if (list1.next == null)
 			list1.next = list2;
 		return head;
+	}
+	public void printLinkedList(Node head) {
+		Node temp = head;
+		while (temp != null) {
+			System.out.print(temp.data + " -> ");
+			temp = temp.next;
+		}
+		System.out.println("NULL");
+	}
+	
+	public Node prepareLinkedList(int... data) {
+
+		Node headNode = new Node(data[0]);
+		Node previous = headNode;
+		for (int i = 1; i < data.length; i++) {
+			Node node = new Node(data[i]);
+			previous.next = node;
+			previous = node;
+		}
+		return headNode;
+	}
+}
+
+
+class Node{
+    int data;
+    Node next;
+    public Node(){
+    }
+
+    public Node(int d){
+    	this.data = d;
+    }
+    
+    public Node(int data, Node next){
+        this();
+        this.data = data;
+        this.next = next;
+    }
+    public int getData(){
+        return this.data;
+    }
+    public Node getNext(){
+        return this.next;
+    }
+    public void setData(int data){
+        this.data = data;
+    }
+    public void setNext(Node next){
+        this.next = next;
+    }
+
+	@Override
+	public String toString() {
+		return "Node [data=" + data + ", next=" + next + "]";
 	}
 }
 
