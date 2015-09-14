@@ -6,8 +6,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.LinkedList;
 
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
@@ -82,18 +85,26 @@ public class LinesComponent extends JComponent {
 		testFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		final LinesComponent comp = new LinesComponent();
 		comp.setPreferredSize(new Dimension(1200, 800));
+		JButton jButton = new JButton("Refresh");
+		final ClosestPoints cp = new ClosestPoints();
+		jButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				comp.clearLines();
+				Point[] points = cp.generateRandomPoints(NUMBER_OF_POINTS);
+				//Point[] points = cp.createCustomPoints();
+				for (Point p : points) {
+					comp.addLine(p.x * 10, p.y * 10, 5, 5);
+				}
+				Point[] solution = cp.solution(points, true);
+				if (solution != null) {
+					comp.addLine(solution[0].x * 10, solution[0].y * 10, solution[1].x * 10, solution[1].y * 10, Color.RED);
+				}
+			}
+		});
+		
 		testFrame.getContentPane().add(comp, BorderLayout.CENTER);
-
-		ClosestPoints cp = new ClosestPoints();
-		//Point[] points = cp.generateRandomPoints(NUMBER_OF_POINTS);
-		Point[] points = cp.createCustomPoints();
-		for (Point p : points) {
-			comp.addLine(p.x * 10, p.y * 10, 5, 5);
-		}
-		Point[] solution = cp.solution(points, true);
-		if (solution != null) {
-			comp.addLine(solution[0].x * 10, solution[0].y * 10, solution[1].x * 10, solution[1].y * 10, Color.RED);
-		}
+		testFrame.getContentPane().add(jButton, BorderLayout.SOUTH);
 		testFrame.pack();
 		testFrame.setVisible(true);
 	}
