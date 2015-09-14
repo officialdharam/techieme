@@ -11,23 +11,62 @@ import java.util.Random;
 
 public class ClosestPoints {
 
+	static Point p1 = null, p2 = null;
+
+	/*
+	 * Main method just to test test cases for two approaches, checking all
+	 * points in Q and checking selective points in Q
+	 */
 	public static void main(String[] args) {
 		ClosestPoints cp = new ClosestPoints();
 		int testPassed = 0;
 		List<Integer> failedIndex = new ArrayList<Integer>();
-		for (int i = 0; i < 1000; i++) {
+		/*
+		 * for (int i = 0; i < 5000; i++) { System.out.println("Test Case " +
+		 * i); Point[] randomPoints = cp.generateRandomPoints(30); Point[]
+		 * solution = cp.solution(randomPoints, true); Point[] solution1 =
+		 * cp.solution(randomPoints, false); if (cp.distance(solution[0],
+		 * solution[1]) == cp.distance(solution1[0], solution1[1])) {
+		 * testPassed++; } else { failedIndex.add(i); } }
+		 */
+
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < 10; i++) {
 			System.out.println("Test Case " + i);
-			Point[] randomPoints = cp.generateRandomPoints(30);
-			Point[] solution = cp.solution(randomPoints, true);
-			Point[] solution1 = cp.solution(randomPoints, false);
-			if (cp.distance(solution[0], solution[1]) == cp.distance(solution1[0], solution1[1])) {
-				testPassed++;
-			} else {
-				failedIndex.add(i);
-			}
+			Point[] randomPoints = cp.generateRandomPoints(10000);
+			cp.solution(randomPoints, true);
 		}
+		long end = System.currentTimeMillis();
+		long first = end - start;
+		start = System.currentTimeMillis();
+
+		for (int i = 0; i < 10; i++) {
+			System.out.println("Test Case " + i);
+			Point[] randomPoints = cp.generateRandomPoints(10000);
+			// cp.solution(randomPoints, false);
+			cp.bruteForce(randomPoints);
+		}
+		end = System.currentTimeMillis();
+		long second = end - start;
+		System.out.println("First One " + first);
+		System.out.println("Second One " + second);
+
 		System.out.println("Test Passed " + testPassed);
 		System.out.println("Test Failed " + failedIndex);
+	}
+
+	public double bruteForce(Point[] randomPoints) {
+		double d = Double.POSITIVE_INFINITY;
+		for (int i = 0; i < randomPoints.length; i++) {
+			for (int j = 0; j < randomPoints.length; j++) {
+				if (i != j) {
+					int ds = distance(randomPoints[i], randomPoints[j]);
+					d = ds < d ? ds : d;
+				}
+			}
+		}
+		
+		return Math.sqrt(d);
 	}
 
 	public Point[] solution(Point[] randomPoints, boolean efficient) {
@@ -35,9 +74,10 @@ public class ClosestPoints {
 		if (randomPoints.length < 2)
 			System.out.println("Only one point. Cannot find pairs.");
 
+		// point map, stores points in X sorted and then internally Y sorted.
+		// Facilitates O(1) retrieval
 		Map<Integer, Map<Integer, Point>> pointMap = new HashMap<Integer, Map<Integer, Point>>();
 		Arrays.sort(randomPoints, new XYComparator());
-		System.out.println("XY SORTED: " + Arrays.toString(randomPoints));
 
 		for (Point pt : randomPoints) {
 			Map<Integer, Point> map = pointMap.get(pt.x);
@@ -59,14 +99,6 @@ public class ClosestPoints {
 		}
 	}
 
-	public Point conincident(Point[] sortedPoints) {
-		for (int i = 0; i < sortedPoints.length - 1; i++) {
-			if (sortedPoints[i].equals(sortedPoints[i + 1]))
-				return sortedPoints[i];
-		}
-		return null;
-	}
-
 	public int distance(Point p1, Point p2) {
 		return (p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y);
 	}
@@ -80,8 +112,6 @@ public class ClosestPoints {
 		}
 		return points;
 	}
-
-	static Point p1 = null, p2 = null;
 
 	public double closestPair(Point[] sortedByXY, int p, int q, Map<Integer, Map<Integer, Point>> pointMap, boolean efficient) {
 		Point l1 = null, l2 = null, r1 = null, r2 = null;
@@ -116,23 +146,22 @@ public class ClosestPoints {
 		Point median = sortedByXY[mid];
 		// find all points whose x is greater than median.x - d and less than
 		// median.x;
-		List<Point> pointOfInterestInP = new ArrayList<Point>();
+		if (!efficient)
+			d = borderMatch(sortedByXY, p, q, mid, d, median);
+		else
+			d = efficientBorderMatch(sortedByXY, p, q, pointMap, mid, d, median);
+		return d;
 
+	}
+
+	private double borderMatch(Point[] sortedByXY, int p, int q, int mid, double d, Point median) {
+		List<Point> pointOfInterestInP = new ArrayList<Point>();
 		for (int i = p; i <= mid; i++) {
 			if (sortedByXY[i].x - median.x < d) {
 				pointOfInterestInP.add(sortedByXY[i]);
 			}
 		}
 
-		if (!efficient)
-			d = borderMatch(sortedByXY, p, q, mid, d, pointOfInterestInP);
-		else
-			d = efficientBorderMatch(sortedByXY, p, q, pointMap, mid, d, median, pointOfInterestInP);
-		return d;
-
-	}
-
-	private double borderMatch(Point[] sortedByXY, int p, int q, int mid, double d, List<Point> pointOfInterestInP) {
 		for (Point pt : pointOfInterestInP) {
 			for (int i = mid + 1; i <= q; i++) {
 				double dist = Math.sqrt(distance(pt, sortedByXY[i]));
@@ -143,14 +172,15 @@ public class ClosestPoints {
 				}
 			}
 		}
-		System.out.println("          BORDER MIN : " + sortedByXY[p] + " - " + sortedByXY[mid] + " - " + sortedByXY[q] + " = " + d + "[" + p1 + ","
-				+ p2 + "]");
+		//System.out.println("          BORDER MIN : " + sortedByXY[p] + " - " + sortedByXY[mid] + " - " + sortedByXY[q] + " = " + d + "[" + p1 + ","
+		//		+ p2 + "]");
 		return d;
 	}
 
-	private double efficientBorderMatch(Point[] sortedByXY, int p, int q, Map<Integer, Map<Integer, Point>> pointMap, int mid, double d,
-			Point median, List<Point> pointOfInterestInP) {
+	private double efficientBorderMatch(Point[] sortedByXY, int p, int q, Map<Integer, Map<Integer, Point>> pointMap, int mid, double d, Point median) {
+		List<Point> pointOfInterestInP = new ArrayList<Point>();
 		int pointer = sortedByXY[mid].x - median.x;
+
 		while (pointer <= median.x) {
 			Map<Integer, Point> map = pointMap.get(pointer);
 			if (map != null) {
@@ -159,7 +189,7 @@ public class ClosestPoints {
 			}
 			pointer++;
 		}
-		
+
 		for (Point pt : pointOfInterestInP) {
 			pointer = median.x;
 			// the below loop must not run more than two times
@@ -173,7 +203,63 @@ public class ClosestPoints {
 					// and checking the minimum. At max two y for each x. The
 					// next nested loop must run for two times only in an more
 					// precise version.
-					
+
+					while (pointer2 < 1 + pt.y + d) {
+						Point point = map.get(pointer2);
+						if (point == pt) {
+							pointer2++;
+							continue;
+						}
+						if (point != null) {
+							double dist = Math.sqrt(distance(pt, point));
+							if (dist < d) {
+								d = dist;
+								p1 = pt;
+								p2 = point;
+							}
+						}
+						pointer2++;
+					}
+				}
+				pointer++;
+			}
+		}
+
+	//	System.out.println("EFFICIENT BORDER MIN : " + sortedByXY[p] + " - " + sortedByXY[mid] + " - " + sortedByXY[q] + " = " + d + "[" + p1 + ","
+		//		+ p2 + "]");
+		return d;
+	}
+
+	private double efficientBorderMatch2(Point[] sortedByXY, int p, int q, Map<Integer, Map<Integer, Point>> pointMap, int mid, double d, Point median) {
+		List<Point> pointOfInterestInP = new ArrayList<Point>();
+		int pointer = sortedByXY[mid].x - median.x;
+
+		while (pointer <= median.x) {
+			Map<Integer, Point> map = pointMap.get(pointer);
+			if (map != null) {
+				Collection<Point> values = map.values();
+				pointOfInterestInP.addAll(values);
+			}
+			pointer++;
+		}
+
+		for (Point pt : pointOfInterestInP) {
+			pointer = median.x;
+
+			// fetch all 8 points which can be a problem
+
+			// the below loop must not run more than two times
+			while (pointer <= median.x + d + 1) {
+				Map<Integer, Point> map = pointMap.get(pointer);
+				if (map != null) {
+					int pointer2 = (int) (pt.y - d - 1);
+					// this can be made more efficient if we try to check in
+					// both direction instead of starting from one end, then
+					// stopping at the first encounter of y in both directions
+					// and checking the minimum. At max two y for each x. The
+					// next nested loop must run for two times only in an more
+					// precise version.
+
 					while (pointer2 < 1 + pt.y + d) {
 						Point point = map.get(pointer2);
 						if (point == pt) {
@@ -198,6 +284,14 @@ public class ClosestPoints {
 		System.out.println("EFFICIENT BORDER MIN : " + sortedByXY[p] + " - " + sortedByXY[mid] + " - " + sortedByXY[q] + " = " + d + "[" + p1 + ","
 				+ p2 + "]");
 		return d;
+	}
+
+	public Point conincident(Point[] sortedPoints) {
+		for (int i = 0; i < sortedPoints.length - 1; i++) {
+			if (sortedPoints[i].equals(sortedPoints[i + 1]))
+				return sortedPoints[i];
+		}
+		return null;
 	}
 
 	public Point[] createCustomPoints() {
@@ -233,10 +327,6 @@ public class ClosestPoints {
 		points[28] = new Point(91, 50);
 		points[29] = new Point(100, 56);
 		return points;
-	}
-
-	private void merge(Point[] points, int p, int q, int mid, int d) {
-
 	}
 }
 
