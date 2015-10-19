@@ -1,4 +1,4 @@
-class MaxHeap extends Heap {
+public class MaxHeap extends Heap {
 
 	public MaxHeap(int maxSize) {
 		super(maxSize);
@@ -10,7 +10,7 @@ class MaxHeap extends Heap {
 
 	@Override
 	public void heapify(int i) {
-		int L = 2 * i;
+		int L = 2 * i + 1;
 		int R = L + 1;
 		int swapIndex = i;
 		if (L < HeapSize && A[L] > A[i])
@@ -26,17 +26,17 @@ class MaxHeap extends Heap {
 	}
 
 	public int getMax() {
-		return A[1];
+		return A[0];
 	}
 
 	@Override
 	public void insert(int N) {
-		A[++HeapSize + 1] = Integer.MIN_VALUE;
+		A[++HeapSize ] = Integer.MIN_VALUE;
 		this.increaseKey(HeapSize, N);
 	}
 
 	public void increaseKey(int i, int N) {
-		A[i + 1] = N;
-		heapify(i + 1);
+		A[i] = N;
+		heapify(i);
 	}
 }
