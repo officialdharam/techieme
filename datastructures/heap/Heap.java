@@ -4,7 +4,7 @@ abstract class Heap {
 
 	public Heap(int maxSize) {
 		this.HeapSize = 0;
-		this.A = new int[maxSize + 1];
+		this.A = new int[maxSize ];
 	}
 
 	public Heap() {
@@ -17,14 +17,14 @@ abstract class Heap {
 
 	public void buildHeapFromArray(int[] Array) {
 		this.HeapSize = Array.length;
-		int k = 1;
-		A = new int[HeapSize + 1];
+		int k = 0;
+		A = new int[HeapSize];
 		for (int i : Array) {
 			A[k++] = i;
 		}
 
 		int i = HeapSize / 2;
-		while (i >= 1) {
+		while (i >= 0) {
 			heapify(i);
 			i--;
 		}
