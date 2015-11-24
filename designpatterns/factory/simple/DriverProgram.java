@@ -5,8 +5,13 @@ public class DriverProgram {
 		Furniture f1 = fs.orderFurniture("CHAIR");
 		System.out.println("Got a new "+f1.toString());
 		
-		Furniture f2 = fs.orderFurniture("TABLE");
+		FurnitureShopVillage1 fsv1 = new FurnitureShopVillage1();
+		Furniture f2 = fsv1.orderFurniture("TABLE");
 		System.out.println("Got a new "+f2.toString());
+		
+		FurnitureShopVillage2 fsv2 = new FurnitureShopVillage2();
+		Furniture f3 = fsv2.orderFurniture("BED");
+		System.out.println("Got a new "+f3.toString());
 		
 	}
 
