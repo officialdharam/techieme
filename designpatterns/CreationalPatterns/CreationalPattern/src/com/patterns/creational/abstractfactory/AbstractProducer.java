@@ -1,6 +1,6 @@
 package com.patterns.creational.abstractfactory;
 
-import com.patterns.creational.model.Furniture;
+import com.patterns.creational.abstractfactory.model.Furniture;
 
 public abstract class AbstractProducer {
 

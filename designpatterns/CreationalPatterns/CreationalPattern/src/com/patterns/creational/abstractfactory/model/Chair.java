@@ -1,14 +1,18 @@
-package com.patterns.creational.model;
+package com.patterns.creational.abstractfactory.model;
 
 import com.patterns.creational.abstractfactory.AbstractMaterialFactory;
 
-public class Table extends Furniture {
+public class Chair extends Furniture {
 
 	AbstractMaterialFactory materialFactory;
 
-	public Table(String n, AbstractMaterialFactory materialFactory) {
-		this.materialFactory = materialFactory;
+	public Chair(String n, AbstractMaterialFactory materialFactory) {
 		this.name = n;
+		this.materialFactory = materialFactory;
+	}
+
+	public String name() {
+		return this.name;
 	}
 
 	@Override

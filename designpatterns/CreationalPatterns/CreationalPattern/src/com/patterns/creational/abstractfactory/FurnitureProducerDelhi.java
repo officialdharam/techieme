@@ -1,8 +1,8 @@
 package com.patterns.creational.abstractfactory;
 
-import com.patterns.creational.model.Chair;
-import com.patterns.creational.model.Furniture;
-import com.patterns.creational.model.Table;
+import com.patterns.creational.abstractfactory.model.Chair;
+import com.patterns.creational.abstractfactory.model.Furniture;
+import com.patterns.creational.abstractfactory.model.Table;
 
 public class FurnitureProducerDelhi extends AbstractProducer {
 

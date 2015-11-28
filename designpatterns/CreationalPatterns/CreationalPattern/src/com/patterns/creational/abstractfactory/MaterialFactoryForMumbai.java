@@ -1,11 +1,11 @@
 package com.patterns.creational.abstractfactory;
 
-import com.patterns.creational.model.Glue;
-import com.patterns.creational.model.IronNail;
-import com.patterns.creational.model.MahoganyWood;
-import com.patterns.creational.model.Nail;
-import com.patterns.creational.model.WhiteCraftGlue;
-import com.patterns.creational.model.Wood;
+import com.patterns.creational.abstractfactory.model.Glue;
+import com.patterns.creational.abstractfactory.model.IronNail;
+import com.patterns.creational.abstractfactory.model.MahoganyWood;
+import com.patterns.creational.abstractfactory.model.Nail;
+import com.patterns.creational.abstractfactory.model.WhiteCraftGlue;
+import com.patterns.creational.abstractfactory.model.Wood;
 
 public class MaterialFactoryForMumbai implements AbstractMaterialFactory {
 
