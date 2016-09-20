@@ -1,5 +1,5 @@
 # techieme.in - the blog
-This repository supports the code for all the articles published on http://techieme.in
+This repository supports the code for all the articles published on http://techieme.in . Please visit the Wiki for this repository.
 
 #About Techie Me
 The blog is my personal work on simplying the learning of Data Structures and Algorithms and helping people prepare for interviews. 
